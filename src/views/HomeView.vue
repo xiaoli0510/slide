@@ -1,51 +1,72 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import img1 from "@/assets/imgs/1.jpg";
+import img2 from "@/assets/imgs/2.jpg";
+import img3 from "@/assets/imgs/3.jpg";
 
-let arr = [
-  1, 2, 3, 4, 5
+const arr = [
+img1, img2, img3
 ];
 const activeIndex = ref(0);
-const carousel = ref(null);
-const carouselInner = ref(null);
+const carousel = ref();
+const carouselInner = ref();
 
-const handleNext = function () {
-  if (activeIndex.value < arr.length-1) {
-    activeIndex.value++;
-  }else{
-    activeIndex.value=0;
+//下一个
+const handleNext = () => {
+  if (activeIndex.value == arr.length - 1) {
+    activeIndex.value = 0;
   }
+  activeIndex.value++;
   carouselInner.value.style.left = (-carousel.value.offsetWidth) * activeIndex.value + 'px';
 }
-const handlePre = function () {
-  if(activeIndex.value>0){
-    activeIndex.value--;
-  }else{
-    activeIndex.value=arr.length-1;
+
+//上一个
+const handlePre = () => {
+  if (activeIndex.value == 0) {
+    activeIndex.value = arr.length - 1;
   }
+  activeIndex.value--;
   carouselInner.value.style.left = (-carousel.value.offsetWidth) * activeIndex.value + 'px';
 }
+
+//自动轮播
+onMounted(() => {
+  let carouselItemDomFirst = `<div class="carousel-item d-flex">
+          <img :src="${img3}" class="img-item">
+        </div>`
+  let carouselItemDomLast = `<div class="carousel-item d-flex">
+          <img :src="${img1}" class="img-item">
+        </div>`
+        console.log(carouselInner,carouselInner.value)
+  // setInterval(function () {
+  //   handleNext();
+  // }, 2000);
+})
 </script>
 
 <template>
   <main>
     <div class="carousel" ref="carousel">
       <div class="carousel-inner" ref="carouselInner">
-        <div class="carousel-item" v-for="(item, index) in arr" :key="index">
-          {{ item }}
+        <div class="carousel-item d-flex" v-for="(item, index) in arr" :key="index">
+          <img :src="item" class="img-item">
         </div>
       </div>
       <button class="btn-right" @click="handleNext">下一个</button>
       <button class="btn-left" @click="handlePre">上一个</button>
+      <div class="dot d-flex">
+        <div class="dot-item" :class="{ active: activeIndex == index }" v-for="(item, index) in arr" :key="index"></div>
+      </div>
     </div>
   </main>
 </template>
 <style lang="scss" scoped>
 .carousel {
   width: 500px;
-  border: 1px solid #000;
   height: 400px;
   overflow: hidden;
   position: relative;
+  background: #ccc;
 
 
   .carousel-inner {
@@ -54,14 +75,18 @@ const handlePre = function () {
     left: 0;
     top: 0;
     overflow: hidden;
-    background-color: #0f0;
     display: flex;
     flex-direction: row;
 
     .carousel-item {
       width: 500px;
       height: 400px;
-      border: 1px solid red;
+      justify-content: center;
+      align-items: center;
+
+      .img-item {
+        height: 400px;
+      }
     }
   }
 
@@ -77,6 +102,27 @@ const handlePre = function () {
     left: 10px;
     top: 50%;
     transform: translate(0, -50%);
+  }
+
+  .dot {
+    position: absolute;
+    left: 50%;
+    bottom: 100px;
+    transform: translate(-50%, 0);
+    width: 80px;
+    flex-direction: row;
+    justify-content: space-around;
+
+    .dot-item {
+      background: #fff;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+
+      &.active {
+        background: #007aff;
+      }
+    }
   }
 }
 </style>
