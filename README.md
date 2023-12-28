@@ -1,5 +1,7 @@
 # slide
 
+用 vue3+ts 写的一个简单的轮播图
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
